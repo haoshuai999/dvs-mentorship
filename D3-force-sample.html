@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<div id="container"></div>
+<script src="https://cdn.jsdelivr.net/npm/d3@7"></script>
+<script type="module">
+
+// const data = {
+//     nodes: [
+//         {
+//             id: "orange",
+//             group: "fruit",
+//         },
+//         {
+//             id: "apple",
+//             group: "fruit"
+//         },
+//         {
+//             id: "banana",
+//             group: "fruit"
+//         },
+//         {
+//             id: "cucumber",
+//             group: "vegetable"
+//         },
+//         {
+//             id: "carrot",
+//             group: "vegetable"
+//         },
+//         {
+//             id: "onion",
+//             group: "vegetable"
+//         },
+//         {
+//             id: "lamb",
+//             group: "meat"
+//         },
+//         {
+//             id: "beef",
+//             group: "meat"
+//         },
+//         {
+//             id: "chicken",
+//             group: "meat"
+//         }
+//     ],
+//     links: [
+//         {
+//             source: "orange",
+//             target: "apple",
+//             value: 3
+//         },
+//         {
+//             source: "orange",
+//             target: "banana",
+//             value: 5
+//         },
+//         {
+//             source: "apple",
+//             target: "banana",
+//             value: 2
+//         },
+//         {
+//             source: "cucumber",
+//             target: "carrot",
+//             value: 8
+//         },
+//         {
+//             source: "cucumber",
+//             target: "onion",
+//             value: 5
+//         },
+//         {
+//             source: "carrot",
+//             target: "onion",
+//             value: 4
+//         },
+//         {
+//             source: "lamb",
+//             target: "beef",
+//             value: 2
+//         },
+//         {
+//             source: "lamb",
+//             target: "chicken",
+//             value: 2
+//         },
+//         {
+//             source: "beef",
+//             target: "chicken",
+//             value: 3
+//         }
+//     ]
+// };
+
+let data = {};
+
+const array = ["a", "b", "c"]
+
+const new_array = [...array, "d"]; //["a", "b", "c", "d"]
+
+d3.json("https://gist.githubusercontent.com/haoshuai999/49ef43465770cc447651dd679a686b4a/raw/d88cc8d9fea13e51fb966de7cd10ddb7a9202656/graph.json").then((d) => {
+    data = d;
+
+    // Specify the dimensions of the chart.
+    const width = 928;
+    const height = 680;
+    const radius = 10;
+
+    // Specify the color scale.
+    const color = d3.scaleOrdinal(["pink", "cyan", "orange"]);
+
+    // The force simulation mutates links and nodes, so create a copy
+    // so that re-evaluating this cell produces the same result.
+    const links = data.links.map(d => ({...d}));
+    const nodes = data.nodes.map(d => ({...d}));
+
+    console.log(links);
+
+    // Create a simulation with several forces.
+    // The force Link is used to connect nodes to links
+    // The force ManyBody is applied to every node. And the negative values make nodes stay aways from each other. And positive values make nodes attract to each other
+    // The force collide is providing a radius for each node to present node overlapping
+    // The force x and y are going to make all the nodes towards a certain point
+    // The force radius is used to make all the nodes along a circle
+    // The force center is used to adjust the center of all the force
+    const simulation = d3.forceSimulation(nodes)
+      .force("link", d3.forceLink(links).id(d => d.id))
+      // .force("charge", d3.forceManyBody())
+      // .force("x", d3.forceX(0))
+      // .force("y", d3.forceY(0));
+      // .force("link", d3.forceLink(links).id(d => d.id))
+      // .force("charge", d3.forceManyBody().strength(20))
+      .force("collide", d3.forceCollide().radius(radius + 1).iterations(3))
+      .force("radial", d3.forceRadial(200, 0, 0))
+      // .force("center", d3.forceCenter(-150, -150));
+      //.force("x", d3.forceX(0).strength(0.05))
+      //.force("y", d3.forceY(0).strength(0.05));
+
+    // Create the SVG container.
+    const svg = d3.select("#container")
+      .append("svg")
+      .attr("width", width)
+      .attr("height", height)
+      .attr("viewBox", [-width / 2, -height / 2, width, height])
+      .attr("style", "max-width: 100%; height: auto;");
+
+    // Add a drag behavior.
+    const drag = simulation => {
+      // Reheat the simulation when drag starts, and fix the subject position.
+      function dragstarted(event, d) {
+        if (!event.active) simulation.alphaTarget(0.3).restart();
+        console.log(d);
+        d.fx = d.x;
+        d.fy = d.y;
+      }
+      
+      // Update the subject (dragged node) position during drag.
+      function dragged(event, d) {
+        d.fx = event.x;
+        d.fy = event.y;
+      }
+      
+      // Restore the target alpha so the simulation cools after dragging ends.
+      // Unfix the subject position now that it’s no longer being dragged.
+      function dragended(event, d) {
+        if (!event.active) simulation.alphaTarget(0);
+        d.fx = null;
+        d.fy = null;
+      }
+      
+      return d3.drag()
+          .on("start", dragstarted)
+          .on("drag", dragged)
+          .on("end", dragended);
+    }
+
+
+    // Add a line for each link, and a circle for each node.
+    const link = svg.append("g")
+      .attr("stroke", "#999")
+      .attr("stroke-opacity", 0.6)
+    .selectAll("line")
+    .data(links)
+    .join("line")
+      .attr("stroke-width", d => d.value);
+
+    const node = svg.append("g")
+      .attr("stroke", "#fff")
+      .attr("stroke-width", 1.5)
+    .selectAll("circle")
+    .data(nodes)
+    .join("circle")
+      .attr("r", radius)
+      .attr("fill", d => color(d.group))
+      .call(drag(simulation))
+      .call(node => node.append("title").text(d => d.id));
+
+
+    // Set the position attributes of links and nodes each time the simulation ticks.
+    simulation.on("tick", () => {
+        link
+            .attr("x1", d => d.source.x)
+            .attr("y1", d => d.source.y)
+            .attr("x2", d => d.target.x)
+            .attr("y2", d => d.target.y);
+
+        node
+            .attr("cx", d => d.x)
+            .attr("cy", d => d.y);
+    });
+})
+</script>

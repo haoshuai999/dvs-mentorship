@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<div id="container"></div>
+<script src="https://cdn.jsdelivr.net/npm/d3@7"></script>
+<script type="module">
+
+const data = [
+    {
+        state: "CA",
+        category: "apple",
+        value: 45
+    },
+    {
+        state: "NY",
+        category: "apple",
+        value: 27
+    },
+    {
+        state: "MA",
+        category: "apple",
+        value: 8
+    },
+    {
+        state: "CA",
+        category: "banana",
+        value: 25
+    },
+    {
+        state: "NY",
+        category: "banana",
+        value: 66
+    },
+    {
+        state: "MA",
+        category: "banana",
+        value: 50
+    },
+    {
+        state: "CA",
+        category: "orange",
+        value: 80
+    },
+    {
+        state: "NY",
+        category: "orange",
+        value: 33
+    },
+    {
+        state: "MA",
+        category: "orange",
+        value: 7
+    }
+];
+
+// Declare the chart dimensions and margins.
+const width = 928;
+const height = 500;
+const marginTop = 10;
+const marginRight = 10;
+const marginBottom = 30;
+const marginLeft = 40;
+
+const dataMap = d3.index(data, d => d.state, d => d.category);
+
+// Determine the series that need to be stacked.
+const series = d3.stack()
+  .keys(d3.union(data.map(d => d.category))) // distinct series keys, in input order
+  .value(([, D], key) => D.get(key).value) // get value for each series key and stack
+    (dataMap); // group by stack then series key
+
+// Prepare the scales for positional and color encodings.
+const x = d3.scaleBand()
+    .domain(d3.groupSort(data, D => -d3.sum(D, d => d.value), d => d.state))
+    .range([marginLeft, width - marginRight])
+    .padding(0.1);
+
+const y = d3.scaleLinear()
+    .domain([0, d3.max(series, d => d3.max(d, d => d[1]))])
+    .range([height - marginBottom, marginTop]);
+
+const color = d3.scaleOrdinal()
+    .domain(series.map(d => d.key))
+    .range(d3.schemeSpectral[series.length]);
+
+// A function to format the value in the tooltip.
+const formatValue = x => isNaN(x) ? "N/A" : x.toLocaleString("en")
+
+// Create the SVG container.
+const svg = d3.select("#container")
+    .append("svg")
+    .attr("width", width)
+    .attr("height", height)
+    .attr("viewBox", [0, 0, width, height]);
+
+// Append a group for each series, and a rect for each element in the series.
+svg.append("g")
+    .selectAll()
+    .data(series)
+    .join("g")
+      .attr("fill", d => color(d.key))
+    .selectAll("rect")
+    .data(D => D.map(d => (d.key = D.key, d)))
+    .join("rect")
+      .attr("x", d => x(d.data[0]))
+      .attr("y", d => y(d[1]))
+      .attr("height", d => y(d[0]) - y(d[1]))
+      .attr("width", x.bandwidth())
+    .append("title")
+      .text(d => `${d.data[0]} ${d.key}\n${formatValue(d.data[1].get(d.key).value)}`);
+
+const xTicks = svg.append("g")
+    .attr("class", "tick")
+    .attr("transform", `translate(0,${height - marginBottom})`)
+    .selectAll()
+    .data(x.domain())
+    .join("g")
+      .attr("transform", d => `translate(${x(d) + x.bandwidth() / 2}, 0)`);
+
+xTicks
+    .append("line")
+    .attr("stroke", "black")
+    .attr("y2", "6");
+    
+xTicks
+    .append("text")
+    .attr("fill", "black")
+    .attr("y", "9")
+    .attr("dy", "0.71em")
+    .attr("text-anchor", "middle")
+    .text(d => d);
+
+const yTicks = svg.append("g")
+    .attr("transform", `translate(${marginLeft + 20},0)`)
+    .selectAll()
+    .data(y.ticks())
+    .join("g")
+      .attr("transform", d => `translate(0, ${y(d)})`);
+
+yTicks
+    .append("line")
+    .attr("stroke", "black")
+    .attr("x2", "-6");
+    
+yTicks
+    .append("text")
+    .attr("fill", "black")
+    .attr("x", "-9")
+    .attr("dy", "0.32em")
+    .attr("text-anchor", "end")
+    .text(d => d);
+
+const swatch = svg.append("g")
+    .attr("transform", `translate(650, 50)`)
+    .selectAll()
+    .data(d3.union(data.map(d => d.category)))
+    .join("g")
+        .attr("transform", (d, i) => `translate(${80 * i}, 50)`);
+
+swatch
+    .append("rect")
+    .attr("x", 0)
+    .attr("y", 0)
+    .attr("width", 20)
+    .attr("height", 20)
+    .attr("fill", d => color(d));
+
+swatch
+    .append("text")
+    .attr("x", 25)
+    .attr("y", 15)
+    .text(d => d);
+
+// Append the horizontal axis.
+// svg.append("g")
+//   .attr("transform", `translate(0,${height - marginBottom})`)
+//   .call(d3.axisBottom(x).tickSizeOuter(0))
+//   .call(g => g.selectAll(".domain").remove());
+
+// // Append the vertical axis.
+// svg.append("g")
+//   .attr("transform", `translate(${marginLeft},0)`)
+//   .call(d3.axisLeft(y).ticks(null, "s"))
+//   .call(g => g.selectAll(".domain").remove());
+
+</script>

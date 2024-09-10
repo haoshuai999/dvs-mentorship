@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<div id="container"></div>
+<script src="https://cdn.jsdelivr.net/npm/d3@7"></script>
+<script type="module">
+
+const data = [
+    {
+        date: "2023-02-01",
+        value: 45
+    },
+    {
+        date: "2023-05-01",
+        value: 25
+    },
+    {
+        date: "2023-06-01",
+        value: "NaN"
+    },
+    {
+        date: "2023-08-01",
+        value: 80
+    },
+    {
+        date: "2023-09-01",
+        value: 52
+    },
+    {
+        date: "2023-11-01",
+        value: 71
+    }
+]
+
+// Declare the chart dimensions and margins.
+const width = 928;
+const height = 500;
+const marginTop = 20;
+const marginRight = 30;
+const marginBottom = 30;
+const marginLeft = 40;
+
+// Format the date
+const formatTime = d3.utcFormat("%m-%d-%y");
+
+// Declare the x (horizontal position) scale.
+const x = d3.scaleUtc()
+    .domain([new Date("2023-01-01"), new Date("2024-01-01")])
+    .range([marginLeft, width - marginRight]);
+
+// Declare the y (vertical position) scale.
+const y = d3.scaleLinear()
+    .domain([0, 100])
+    .range([height - marginBottom, marginTop]);
+
+// Declare the line generator.
+const line = d3.line()
+      .defined(d => !isNaN(d.value))
+      .x(d => x(new Date(d.date)))
+      .y(d => y(d.value));
+
+// Declare the area generator.
+const area = d3.area()
+      .defined(d => !isNaN(d.value))
+      .x(d => x(new Date(d.date)))
+      .y0(y(0))
+      .y1(d => y(d.value));
+
+// Create the SVG container.
+const svg = d3.select("#container")
+    .append("svg")
+    .attr("width", width)
+    .attr("height", height)
+    .attr("viewBox", [0, 0, width, height])
+    .attr("style", "max-width: 100%; height: auto; height: intrinsic;");
+
+// Add the X axis
+const xTicks = svg.append("g")
+    .attr("class", "tick")
+    .attr("transform", `translate(0,${height - marginBottom})`)
+    .selectAll()
+    .data(x.ticks())
+    .join("g")
+      .attr("transform", d => `translate(${x(d)}, 0)`);
+
+xTicks
+    .append("line")
+    .attr("stroke", "black")
+    .attr("y2", "6");
+    
+xTicks
+    .append("text")
+    .attr("fill", "black")
+    .attr("y", "9")
+    .attr("dy", "0.71em")
+    .attr("text-anchor", "middle")
+    .text(d => formatTime(d));
+
+// Add the Y axis
+const yTicks = svg.append("g")
+    .attr("transform", `translate(${marginLeft},0)`)
+    .selectAll()
+    .data(y.ticks())
+    .join("g")
+      .attr("transform", d => `translate(0, ${y(d)})`);
+
+yTicks
+    .append("line")
+    .attr("stroke", "black")
+    .attr("x2", "-6");
+    
+yTicks
+    .append("text")
+    .attr("fill", "black")
+    .attr("x", "-9")
+    .attr("dy", "0.32em")
+    .attr("text-anchor", "end")
+    .text(d => d);
+
+// Append a path for the line.
+svg.append("path")
+    .attr("fill", "none")
+    .attr("stroke", "#ccc")
+    .attr("stroke-width", 1.5)
+    .attr("d", line(data.filter(d => typeof d.value === "number")));
+
+// Append a path for the line.
+svg.append("path")
+    .attr("fill", "none")
+    .attr("stroke", "red")
+    .attr("stroke-width", 1.5)
+    .attr("d", line(data));
+
+
+// // Append a path for the area.
+// svg.append("path")
+//     .attr("fill", "pink")
+//     .attr("stroke", "red")
+//     .attr("stroke-width", 1.5)
+//     .attr("d", area(data));
+</script>
