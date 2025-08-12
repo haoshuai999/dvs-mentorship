@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8" />
+    <title>My test page</title>
+    <style>
+      text {
+        font-family: Arial;
+        font-size: 50px;
+        font-weight: 900;
+        fill: white;
+        stroke: black;
+        stroke-width: 2;
+      }
+    </style>
+  </head>
+  <body>
+    <svg width="200" height="200">
+      <text x="25" y="120">Hello!</text>
+    </svg>
+    <svg width="200" height="200" viewBox="-200 -200 400 400">
+      <g transform="translate(0 5) scale(1)">
+        <g>
+         <!--  <polyline points="0,0 36,-50 0,-100" fill="none" stroke="black" />
+          <polyline points="0,0 -36,-50 0,-100" fill="none" stroke="black" /> -->
+          <polygon points="0,0 36,-50 0,-100" fill="#EDD8B7" />
+          <polygon points="0,0 -36,-50 0,-100" fill="#E5C39C" />
+        </g>
+        <g transform="rotate(72)">
+          <polygon points="0,0 36,-50 0,-100" fill="#EDD8B7" />
+          <polygon points="0,0 -36,-50 0,-100" fill="#E5C39C" />
+        </g>
+        <g transform="rotate(-72)">
+          <polygon points="0,0 36,-50 0,-100" fill="#EDD8B7" />
+          <polygon points="0,0 -36,-50 0,-100" fill="#E5C39C" />
+        </g>
+        <g transform="rotate(144)">
+          <polygon points="0,0 36,-50 0,-100" fill="#EDD8B7" />
+          <polygon points="0,0 -36,-50 0,-100" fill="#E5C39C" />
+        </g>
+        <g transform="rotate(-144)">
+          <polygon points="0,0 36,-50 0,-100" fill="#EDD8B7" />
+          <polygon points="0,0 -36,-50 0,-100" fill="#E5C39C" />
+        </g>
+      </g>
+    </svg>
+    <svg
+      width="200"
+      height="200"
+      viewBox="-100 -100 200 200"
+    >
+      <path
+        d="
+            M -30 -20
+            L   0  10
+            L  30 -20"
+        fill="none"
+        stroke="red"
+        stroke-width="10"
+        stroke-linecap="round"
+      />
+    </svg>
+    <svg width="200" height="200" viewBox="-100 -100 200 200">
+      <g stroke="black" stroke-width="2">
+        <circle cx="0" cy="-45" r="7" fill="#4F6D7A" />
+        <circle cx="0" cy="50" r="10" fill="#F79257" />
+        <path
+          d="
+            M -50 40
+            L -50 50
+            L 50 50
+            L 50 40
+            Q 40 40 40 10
+            C 40 -60 -40 -60 -40 10
+            Q -40 40 -50 40"
+          fill="#FDEA96"
+        />
+      </g>
+    </svg>
+  </body>
+</html>

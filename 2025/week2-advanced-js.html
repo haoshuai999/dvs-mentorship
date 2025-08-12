@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8" />
+    <title>My test page</title>
+    <style>
+      .text-color {
+        color: red;
+      }
+    </style>
+    <script>
+      // Declaring an array
+      let x = [];
+      let a = ["apple", "banana", "orange"];
+      
+      // Add elements to the end
+      a.push("peach", "grape");
+
+      // Add elements to the front (rare)
+      a.unshift("strawberry", "watermelon");
+
+      // Remove one element from the front (rare)
+      a.shift();
+
+      // Remove one element from the end
+      a.pop();
+
+      // Remove 1 item starting from index 0
+      a.splice(0, 1);
+
+      // Keep in mind that all these methods will modify array a
+
+      console.log("Index", a.indexOf("apple"));
+
+      // Loop through the array and return a modified array
+      let b = a.map(d => d.toUpperCase());
+
+      // Filter the array and return a modified array
+      let c = a.filter(d => d.length > 5);
+
+      // Extract values from an array. The start index is included but the end index is not included
+      let d = a.slice(0, 1);
+
+      // You can chain multiple array operations
+      let e = a.map(d => d.toUpperCase()).filter(d => d.length > 5);
+
+      // Reverse the array
+      a.reverse();
+
+      // Sort the array by the number of letters
+      a.sort((a, b) => a.length - b.length);
+
+      console.log("Array a", a);
+      console.log("Array b", b);
+      console.log("Array c", c);
+      console.log("Array d", d);
+      console.log("Array e", e);
+
+      // Advanced array
+
+      // Concat elements option 1
+      console.log(b.concat(c));
+
+      // Concat elements option 2
+      const newArray = ['firstItem', ...a, 'test'];
+      console.log(newArray);
+
+      // Convert array to string
+      let f = a.join();
+      console.log("Join", f);
+
+      // Convert string to array
+      let g = f.split(",");
+      console.log("split", g);
+
+      // Check whether a value exists in an array
+      let h = a.includes("apple");
+      console.log("includes", h);
+
+      // Loop through an array without return value
+      a.forEach(d => {
+        console.log(d);
+      })
+
+      // Object section
+      let obj = {
+          make: "nissan",
+          model: "rogue",
+          year: 2020
+      };
+
+      // Assign a key,value pair to the object
+      obj.cylinder = 6;
+    </script> 
+  </head>
+  <body>
+    <h1>Hello World!</h1>
+    <div>
+      <p class="text-color">This is my page</p>
+    </div>
+  </body>
+</html>

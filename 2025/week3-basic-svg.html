@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8" />
+    <title>My test page</title>
+    <style>
+      .text-color {
+        color: red;
+      }
+
+      .limb {
+        stroke: #cd803d;
+        stroke-width: 35px;
+        stroke-linecap: round;
+      }
+
+      /*circle {
+        fill: blue;
+      }*/
+    </style>
+    <script>
+      // Object section
+      let obj = {
+          make: "nissan",
+          model: "rogue",
+          year: 2020
+      };
+
+      console.log(`make: ${obj.make}`);
+
+      // Loop through keys
+      Object.keys(obj).forEach(key => console.log(key));
+
+
+      // Loop through values
+      Object.values(obj).forEach(value => console.log(value));
+
+      // Loop through object option 1
+      Object.entries(obj).forEach(([key, value]) => {
+          console.log(`${key}: ${value}`)
+      })
+
+      // Loop through object option 2
+      for (let [key, value] of Object.entries(obj)) {
+          console.log(`${key}: ${value}`)
+      }
+
+      // Map
+      // Map is not as important since D3 doesn't support it
+      const map = new Map();
+
+      // How to create a map
+      map.set("make", "nissan");
+      map.set("model", "rogue");
+      map.set("year", 2020);
+
+      // Another way
+      const map2 = new Map([
+        ['name', 'Alice'],
+        ['age', 30],
+        ['gender', 'female']
+      ]);
+
+      console.log(obj);
+      console.log(map);
+      console.log(map2)
+      console.log(map.get("year"));
+
+      // Modify the map
+      map.set("year", 2022);
+
+      console.log(map.get("year"));
+
+      console.log(map.size);
+
+      // Delete an element from the map
+      map.delete("year");
+
+      console.log(map.size);
+
+      // Summary about JavaScript
+      // 1. JavaScript is a single-threaded language - it means it is usually slow and not good for big data computing
+      // 2. JavaScript uses dynamic typing - it means a variable can be changed to other type (check TypeScript if you don't like this)
+      // 3. JavaScript requires curly brackets and semicolons to break lines and functions
+    </script> 
+  </head>
+  <body>
+    <h1>Hello World!</h1>
+    <div>
+      <p class="text-color">This is my page</p>
+      <svg width="100" height="100" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="50" cy="50" r="25" fill="red" />
+      </svg>
+    </div>
+  </body>
+</html>

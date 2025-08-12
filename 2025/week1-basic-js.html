@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8" />
+    <title>My test page</title>
+    <style>
+      .text-color {
+        color: red;
+      }
+    </style>
+    <script>
+      // Declaring variables
+      let i = 0;
+      let j = i + 1;
+      //var k = 1;
+
+      const d = 25;
+      i++;
+      //d = d + 1;
+      
+      console.log(d);
+      console.log(i);
+      console.log(j);
+
+      console.log("--------------------");
+
+      // Operators
+      let x = true;
+      let y = false;
+      let f = "hello";
+
+      console.log(f);
+      console.log(x && y);
+      console.log(x || y);
+      console.log(!x);
+
+      console.log("--------------------");
+
+      // If ... else blocks
+      if (i > 0) {
+        console.log("i is greater than 0")
+      } else {
+        console.log("i is no larger than 0")
+      }
+
+      if (j > 0) {
+        console.log("j is greater than 0")
+      } else if (j == 0 ) {
+        console.log("j equals to 0")
+      } else {
+        console.log("j is smaller than 0")
+      }
+
+      console.log("--------------------");
+
+      // falsy values include false, undefined, null, 0, NaN and ""
+
+      // Iterations
+      let t = 0;
+
+      while (t < 10) {
+        t++;
+        if (t === 3) {
+          continue;
+        }
+        if (t === 7) {
+          break;
+        }
+        console.log(t)
+      }
+
+      for (let step = 0; step < 5; step++) {
+        // Runs 5 times, with values of step 0 through 4.
+        console.log("Walking east one step");
+      }
+
+      console.log("--------------------");
+
+      // Functions
+      function testFunc(){
+        let i = 0;
+
+        return i;
+      }
+
+      console.log(testFunc());
+
+      const testFunc2 = (num = 5) => {
+        let i = num;
+        return i;
+      }
+
+      console.log(testFunc2());
+    </script> 
+  </head>
+  <body>
+    <h1>Hello World!</h1>
+    <div>
+      <p class="text-color">This is my page</p>
+    </div>
+  </body>
+</html>
