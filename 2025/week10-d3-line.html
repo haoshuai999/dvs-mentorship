@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<div id="container"></div>
+<script src="https://cdn.jsdelivr.net/npm/d3@7"></script>
+<script type="module">
+
+const data = [
+    {
+        date: "2023-02-01",
+        value: 45
+    },
+    {
+        date: "2023-05-01",
+        value: 25
+    },
+    {
+        date: "2023-06-01",
+        value: 38
+    },
+    {
+        date: "2023-08-01",
+        value: 80
+    },
+    {
+        date: "2023-09-01",
+        value: 52
+    },
+    {
+        date: "2023-11-01",
+        value: 71
+    }
+]
+
+// Declare the chart dimensions and margins.
+const width = 928;
+const height = 500;
+const marginTop = 20;
+const marginRight = 30;
+const marginBottom = 30;
+const marginLeft = 40;
+
+// Format the date
+const formatTime = d3.utcFormat("%m-%d-%y");
+
+// Declare the x (horizontal position) scale.
+const xScale = d3.scaleUtc()
+    .domain([new Date("2023-01-01"), new Date("2024-01-01")])
+    .range([marginLeft, width - marginRight]);
+
+// Declare the y (vertical position) scale.
+const yScale = d3.scaleLinear()
+    .domain([0, 100])
+    .range([height - marginBottom, marginTop]);
+
+// Declare the line generator.
+const line = d3.line()
+      .defined(d => !isNaN(d.value))
+      .x(d => xScale(new Date(d.date)))
+      .y(d => yScale(d.value));
+
+// Create the SVG container.
+const svg = d3.select("#container")
+    .append("svg")
+    .attr("width", width)
+    .attr("height", height)
+    .attr("viewBox", [0, 0, width, height]);
+
+// Add the X axis
+const xTicks = svg.append("g")
+    .attr("class", "tick")
+    .attr("transform", `translate(0,${height - marginBottom})`)
+    .selectAll()
+    .data(xScale.ticks())
+    .join("g")
+      .attr("transform", d => `translate(${xScale(d)}, 0)`);
+
+xTicks
+    .append("line")
+    .attr("stroke", "black")
+    .attr("y2", 6);
+    
+xTicks
+    .append("text")
+    .attr("fill", "black")
+    .attr("y", 9)
+    .attr("dy", "0.71em")
+    .attr("text-anchor", "middle")
+    .text(d => formatTime(d));
+
+// Add the Y axis
+const yTicks = svg.append("g")
+    .attr("transform", `translate(${marginLeft},0)`)
+    .selectAll()
+    .data(yScale.ticks())
+    .join("g")
+      .attr("transform", d => `translate(0, ${yScale(d)})`);
+
+yTicks
+    .append("line")
+    .attr("stroke", "black")
+    .attr("x2", -6);
+    
+yTicks
+    .append("text")
+    .attr("fill", "black")
+    .attr("x", -9)
+    .attr("dy", "0.32em")
+    .attr("text-anchor", "end")
+    .text(d => d);
+
+// Append a path for the line.
+svg.append("path")
+    .attr("fill", "none")
+    .attr("stroke", "#ccc")
+    .attr("stroke-width", 1.5)
+    .attr("stroke-dasharray", 4)
+    .attr("d", line(data.filter(d => typeof d.value === "number")));
+
+// Append a path for the line.
+svg.append("path")
+    .attr("fill", "none")
+    .attr("stroke", "red")
+    .attr("stroke-width", 1.5)
+    .attr("d", line(data));
+
+
+// Tooltip
+const tooltip = d3.select("#container")
+    .append("div")
+    .attr("class", "tooltip");
+
+const tooltipDot = svg
+    .append("circle")
+    .attr("r", 5)
+    .attr("fill", "#fc8781")
+    .attr("stroke", "black")
+    .attr("stroke-width", 2)
+    .style("opacity", 0)
+    .style("pointer-events", "none");
+
+svg.append("rect")
+    .attr("width", width - marginLeft - marginRight)
+    .attr("height", height - marginTop - marginBottom)
+    .style("opacity", 0)
+    .on("touchmouse mousemove", function (event) {
+      const mousePos = d3.pointer(event, this);
+      // x coordinate stored in mousePos index 0
+      const date = xScale.invert(mousePos[0]);
+
+      // Custom Bisector - left, center, right
+      const dateBisector = d3.bisector(d => new Date(d.date)).left;
+      const bisectionIndex = dateBisector(data, date);
+
+      // math.max prevents negative index reference error
+      const hoveredIndexData = data[Math.max(0, bisectionIndex - 1)];
+
+      // Update SVG
+      tooltipDot
+        .style("opacity", 1)
+        .attr("cx", xScale(new Date(hoveredIndexData.date)))
+        .attr("cy", yScale(hoveredIndexData.value))
+        .raise();
+
+      tooltip
+        .style("opacity", 1)
+        .style("top", `${yScale(hoveredIndexData.value) - 50}px`)
+        .style("left", `${xScale(new Date(hoveredIndexData.date))}px`)
+        .html(`${formatTime(new Date(hoveredIndexData.date))}: <br>${hoveredIndexData.value}`);
+    })
+    .on("mouseleave", function () {
+      tooltipDot.style("opacity", 0);
+      tooltip.style("opacity", 0);
+    });
+</script>
+
+<style>
+    .tooltip {
+         position: absolute;
+         text-align: center;
+         padding: 5px;
+         background: #FFFFFF;
+         color: #313639;
+         border: 1px solid #313639;
+         border-radius: 8px;
+         pointer-events: none;
+         font-size: 15px;
+    }
+</style>

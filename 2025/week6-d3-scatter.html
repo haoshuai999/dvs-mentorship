@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<div id="container"></div>
+<script src="https://cdn.jsdelivr.net/npm/d3@7"></script>
+<script type="module">
+
+const data = [
+    {
+        date: "2023-02-01",
+        value: 45
+    },
+    {
+        date: "2023-05-01",
+        value: 25
+    },
+    {
+        date: "2023-08-01",
+        value: 80
+    },
+]
+
+// Declare the chart dimensions and margins.
+const width = 640;
+const height = 400;
+const marginTop = 20;
+const marginRight = 20;
+const marginBottom = 30;
+const marginLeft = 40;
+
+// Declare the x (horizontal position) scale.
+const x = d3.scaleUtc()
+    .domain([new Date("2023-01-01"), new Date("2024-01-01")])
+    .range([marginLeft, width - marginRight]);
+
+// Declare the y (vertical position) scale.
+const y = d3.scaleLinear()
+    .domain([0, 100])
+    .range([height - marginBottom, marginTop]);
+
+// Create the SVG container. Using this way, you will assemble the SVG first and then insert it to the DOM
+const svg = d3.create("svg")
+    .attr("width", width)
+    .attr("height", height);
+
+// The other way to create a SVG. Using this way, you will insert the SVG right away.
+// const svg = d3.select("#container")
+//     .append("svg")
+//     .attr("width", width)
+//     .attr("height", height);
+
+// Add the x-axis.
+svg.append("g")
+    .attr("transform", `translate(0,${height - marginBottom})`)
+    .call(d3.axisBottom(x).tickFormat(d3.utcFormat("%m-%d-%y")))
+    .call(g => g.select(".domain").remove());
+
+// Add the y-axis.
+svg.append("g")
+    .attr("transform", `translate(${marginLeft},0)`)
+    .call(d3.axisLeft(y))
+    .call(g => g.select(".domain").remove());
+
+// The modern way to append circles into the SVG.
+svg.append("g")
+    .selectAll()
+    .data(data)
+    .join("circle")
+    .attr("cx", d => x(new Date(d.date)))
+    .attr("cy", d => y(d.value))
+    .attr("r", 10)
+    .attr("fill", "red");
+
+// The legacy way to appends circles into the SVG. Both ways work, but I would prefer the modern way
+// svg.append("g")
+//     .selectAll("circle")
+//     .data(data)
+//     .enter()
+//     .append("circle")
+//     .attr("cx", d => x(new Date(d.date)))
+//     .attr("cy", d => y(d.value))
+//     .attr("r", 10)
+//     .attr("fill", "red");
+
+// Append the SVG element. Use this with the d3.create function
+container.append(svg.node());
+
+</script>
