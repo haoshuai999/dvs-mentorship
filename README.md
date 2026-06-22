@@ -8,4 +8,4 @@ I taught both mentees the basic of SVG and D3.js. One mentee is more interested 
 I post the code here for future references, and I might use them again for the future mentorship sessions.
 
 ## 2025
-I became a mentor of the DVS mentorship again in 2025. The "2025" folder contains all the code I prepared for the mentorship sessions. This time, I have one mentee who has little experience in JavaScript. The mentorship starts with sessions about basic HTML, CSS and JavaScript in the first three weeks. Week 4 and 5 are about basic SVGs.
+I became a mentor of the DVS mentorship again in 2025. The "2025" folder contains all the code I prepared for the mentorship sessions. This time, I have one mentee who has little experience in JavaScript. The mentorship starts with sessions about basic HTML, CSS and JavaScript in the first three weeks. Week 4 and 5 are about basic SVGs. Week 6 to 10 are about creating different D3 charts like bar charts, line charts, scatter plots and pie charts.
