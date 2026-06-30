@@ -1,0 +1,99 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>My test page</title>
+  </head>
+  <body>
+    <svg width="200" height="200" viewBox="-200 -200 400 400">
+      <text transform="rotate(0)" x="125" y="120">Hello!</text>
+      <text transform="rotate(45)" x="125" y="120">Hello!</text>
+      <text transform="rotate(90)" x="125" y="120">Hello!</text>
+      <text transform="rotate(-45)" x="125" y="120">Hello!</text>
+      <text transform="rotate(-90)" x="125" y="120">Hello!</text>
+    </svg>
+    <svg width="200" height="200" viewBox="-200 -200 400 400">
+      <text transform="rotate(0)">Hello!</text>
+      <text transform="rotate(45)" >Hello!</text>
+      <text transform="rotate(90)">Hello!</text>
+      <text transform="rotate(-45)">Hello!</text>
+      <text transform="rotate(-90)">Hello!</text>
+    </svg>
+    <svg width="200" height="200" viewBox="-200 -200 400 400">
+      <text transform="translate(125, 120) rotate(30)">Hello!</text>
+      <text transform="translate(125, 120) rotate(60)">Hello!</text>
+      <text transform="translate(125, 120) rotate(90)">Hello!</text>
+      <text transform="translate(125, 120) rotate(120)">Hello!</text>
+    </svg>
+    <svg width="200" height="200" viewBox="-200 -200 400 400">
+      <g transform="scale(2)">
+        <g transform="rotate(0)">
+          <polygon points="0,0 36,-50 0,-100" fill="#EDD8B7" />
+          <polygon points="0,0 -36,-50 0,-100" fill="#E5C39C" />
+        </g>
+        <g transform="rotate(72)">
+          <polygon points="0,0 36,-50 0,-100" fill="#EDD8B7" />
+          <polygon points="0,0 -36,-50 0,-100" fill="#E5C39C" />
+        </g>
+        <g transform="rotate(144)">
+          <polygon points="0,0 36,-50 0,-100" fill="#EDD8B7" />
+          <polygon points="0,0 -36,-50 0,-100" fill="#E5C39C" />
+        </g>
+              <g transform="rotate(-72)">
+          <polygon points="0,0 36,-50 0,-100" fill="#EDD8B7" />
+          <polygon points="0,0 -36,-50 0,-100" fill="#E5C39C" />
+        </g>
+          <g transform="rotate(-144)">
+          <polygon points="0,0 36,-50 0,-100" fill="#EDD8B7" />
+          <polygon points="0,0 -36,-50 0,-100" fill="#E5C39C" />
+        </g>
+      </g>
+    </svg>
+    <svg width="200" height="200" viewBox="-100 -100 200 200">
+      <path 
+        d="
+          M -30 -20
+          L   0  10
+          L  30 -20
+        "
+        fill="none"
+        stroke="red"
+        stroke-width="80"
+        stroke-linecap="round"
+      />
+    </svg>
+    <svg width="200" height="200" viewBox="-100 -100 200 200" fill="none">
+      <g fill="lightblue" stroke="black" stroke-width="3">
+        <polygon points="-70,0 -35,-60 35,-60 70,0 35,60 -35,60" />
+      </g>
+      <g stroke="blue" stroke-width="3">
+        <circle cy="-20" r="10" />
+        <path
+          d="
+            M -25,25
+            C -25,-10 25,-10 25,25
+            Z
+          "
+        />
+      </g>
+    </svg>
+    <svg width="200" height="200" viewBox="-100 -100 200 200">
+      <g stroke="black" stroke-width="2">
+        <circle cx="0" cy="-45" r="7" fill="darkgrey" />
+        <circle cx="0" cy="50" r="10" fill="orange" />
+        <path
+          d="
+            M -50 40
+            L -50 50
+            L 50 50
+            L 50 40
+            Q 40 40 40 10
+            C 40 -60 -40 -60 -40 10
+            Q -40 40 -50 40"
+          fill="yellow"
+        />
+      </g>
+    </svg>
+  </body>
+</html>
