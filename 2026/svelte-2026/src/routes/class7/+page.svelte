@@ -12,8 +12,10 @@
 	];
 
 	const margin = { top: 30, right: 50, bottom: 50, left: 50 };
-	const width = 600 - margin.left - margin.right;
-	const height = 400 - margin.top - margin.bottom;
+	const svgWidth = 600;
+	const svgHeight = 400;
+	const width = svgWidth - margin.left - margin.right;
+	const height = svgHeight - margin.top - margin.bottom;
 
 	const xScale = $derived(
 		d3.scaleTime()
@@ -44,8 +46,8 @@
 <h1>Class 7 - D3 Line Chart</h1>
 
 <svg
-	width={width + margin.left + margin.right}
-	height={height + margin.top + margin.bottom}
+	width={svgWidth}
+	height={svgHeight}
 >
 	<g transform="translate({margin.left},{margin.top})">
 
@@ -81,14 +83,16 @@
 		<g transform="translate(0,{height})">
 			<line x2={width} stroke="black" />
 			{#each xTicks as tick}
-            	<line
-					x1={xScale(tick)}
-					x2={xScale(tick)}
-					y1="0"
-                    y2={-height}
-					stroke="lightgray"
-                    stroke-dasharray="4 4"
-				/>
+				{#if xScale(tick) > 0}
+					<line
+						x1={xScale(tick)}
+						x2={xScale(tick)}
+						y1="0"
+						y2={-height}
+						stroke="lightgray"
+						stroke-dasharray="4 4"
+					/>
+				{/if}
 				<line
 					x1={xScale(tick)}
 					x2={xScale(tick)}
