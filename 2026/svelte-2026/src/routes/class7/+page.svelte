@@ -2,13 +2,13 @@
 	import * as d3 from "d3";
 
 	let data = [
-		{ date: new Date("2026-07-01"), sales: 18 },
-		{ date: new Date("2026-08-01"), sales: 24 },
-		{ date: new Date("2026-09-01"), sales: 21 },
-		{ date: new Date("2026-10-01"), sales: 29 },
-		{ date: new Date("2026-11-01"), sales: 35 },
-		{ date: new Date("2026-12-01"), sales: 31 },
-		{ date: new Date("2027-01-01"), sales: 40 },
+		{ date: "2026-07-01", sales: "18" },
+		{ date: "2026-08-01", sales: "24" },
+		{ date: "2026-09-01", sales: "21" },
+		{ date: "2026-10-01", sales: "29" },
+		{ date: "2026-11-01", sales: "35" },
+		{ date: "2026-12-01", sales: "31" },
+		{ date: "2027-01-01", sales: "40" },
 	];
 
 	const margin = { top: 30, right: 50, bottom: 50, left: 50 };
@@ -17,77 +17,70 @@
 	const width = svgWidth - margin.left - margin.right;
 	const height = svgHeight - margin.top - margin.bottom;
 
-	const xScale = $derived(
-		d3.scaleTime()
-			.domain(d3.extent(data, (d) => d.date))
+	let xScale = $derived(
+		d3
+			.scaleTime()
+			.domain(d3.extent(data, (d) => new Date(d.date)))
 			.range([0, width])
-            .nice()
+			.nice(),
 	);
 
-	const yScale = $derived(
-		d3.scaleLinear()
-			.domain([0, d3.max(data, (d) => d.sales)])
-			.nice()
+	let yScale = $derived(
+		d3
+			.scaleLinear()
+			.domain([0, d3.max(data, (d) => +d.sales)])
 			.range([height, 0])
+			.nice(),
 	);
 
-	const linePath = $derived(
-		d3.line()
-			.x((d) => xScale(d.date))
-			.y((d) => yScale(d.sales))
-			.curve(d3.curveMonotoneX)(data)
+	let linePath = $derived(
+		d3
+			.line()
+			.x((d) => xScale(new Date(d.date)))
+			.y((d) => yScale(+d.sales)),
 	);
 
-	const xTicks = $derived(xScale.ticks(5));
-	const yTicks = $derived(yScale.ticks(5));
-	const formatDate = d3.timeFormat("%b. %Y");
+	let xTicks = $derived(xScale.ticks(5));
+	let yTicks = $derived(yScale.ticks(5));
+
+	let formatDate = d3.timeFormat("%b %Y");
+
+	$inspect(data);
 </script>
 
-<h1>Class 7 - D3 Line Chart</h1>
+<h1>Class 7: D3 Line Chart</h1>
 
-<svg
-	width={svgWidth}
-	height={svgHeight}
->
-	<g transform="translate({margin.left},{margin.top})">
-
-        <!-- Y axis and optional gridlines -->
+<svg width={svgWidth} height={svgHeight}>
+	<g transform={`translate(${margin.left},${margin.top})`}>
 		<g>
-			<line y2={height} stroke="black" />
+			<line y2={height} stroke="#000" />
 			{#each yTicks as tick}
-                <!-- Grid lines -->
-                <line
-                    x1="0"
-                    x2={width}
-                    y1={yScale(tick)}
-                    y2={yScale(tick)}
-                    stroke="lightgray"
-                    stroke-dasharray="4 4"
-                />
-				<line x1="-6" y1={yScale(tick)} y2={yScale(tick)} stroke="black" />
-				<text
-					x="-10"
-					y={yScale(tick)}
-					dy="0.32em"
-					text-anchor="end"
-					font-family="sans-serif"
-					font-size="10px"
-					fill="black"
-				>
+				<line
+					x2={width}
+					y1={yScale(tick)}
+					y2={yScale(tick)}
+					stroke="lightgray"
+					stroke-dasharray="4 4"
+				/>
+				<line
+					x1={-6}
+					x2={0}
+					y1={yScale(tick)}
+					y2={yScale(tick)}
+					stroke="#000"
+				/>
+				<text x={-10} y={yScale(tick)} text-anchor="end" dy="0.32em">
 					{tick}
 				</text>
 			{/each}
 		</g>
-
-        <!-- X axis and optional gridlines -->
-		<g transform="translate(0,{height})">
-			<line x2={width} stroke="black" />
+		<g transform={`translate(0,${height})`}>
+			<line x2={width} stroke="#000" />
 			{#each xTicks as tick}
 				{#if xScale(tick) > 0}
 					<line
 						x1={xScale(tick)}
 						x2={xScale(tick)}
-						y1="0"
 						y2={-height}
 						stroke="lightgray"
 						stroke-dasharray="4 4"
@@ -96,42 +89,33 @@
 				<line
 					x1={xScale(tick)}
 					x2={xScale(tick)}
-					y2="6"
-					stroke="black"
+					y2={6}
+					stroke="#000"
 				/>
-				<text
-					x={xScale(tick)}
-					y="22"
-					text-anchor="middle"
-					font-family="sans-serif"
-					font-size="10px"
-					fill="black"
-				>
+				<text x={xScale(tick)} y={20} text-anchor="middle">
 					{formatDate(tick)}
 				</text>
 			{/each}
 		</g>
-
-		<!-- Line path -->
-		<path d={linePath} fill="none" stroke="green" stroke-width="3" />
-
-		<!-- Data points -->
-		{#each data as d}
-			<circle cx={xScale(d.date)} cy={yScale(d.sales)} r="5" fill="orange" />
-		{/each}
-
-		<!-- Point labels -->
-		{#each data as d}
-			<text
-				x={xScale(d.date)}
-				y={yScale(d.sales) - 10}
-				text-anchor="middle"
-				font-size="12px"
-				fill="#1f2937"
-			>
-				{d.sales}
-			</text>
-		{/each}
+		<path d={linePath(data)} fill="none" stroke="green" stroke-width="3" />
+		<g>
+			{#each data as d}
+				<circle
+					cx={xScale(new Date(d.date))}
+					cy={yScale(+d.sales)}
+					r={4}
+					fill="red"
+				/>
+				<text
+					x={xScale(new Date(d.date))}
+					y={yScale(+d.sales) - 10}
+					text-anchor="middle"
+					font-size="16px"
+				>
+					{d.sales}
+				</text>
+			{/each}
+		</g>
 	</g>
 </svg>
 
