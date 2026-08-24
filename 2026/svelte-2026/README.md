@@ -5,6 +5,7 @@ Everything you need to build a Svelte project, powered by [`sv`](https://github.
 ## Prerequisite
 
 Before you start, make sure you install the following libraries on your laptop:
+
 - Node.js (version 24+)
 - npm (version 18+)
 - VS Code (version 1.108.1+)
@@ -12,7 +13,8 @@ Before you start, make sure you install the following libraries on your laptop:
 ## Plugins
 
 Please install the following plugins:
-- Svelte for VS Code: you can easily read the Svelte files. 
+
+- Svelte for VS Code: you can easily read the Svelte files.
 - Rainbow CSV: you can easily read the CSV files.
 
 I suggest using the "Svelte for VS Code" plugin for the "format on save" settings of VS Code. That will make your code a lot cleaner.
