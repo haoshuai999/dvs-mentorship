@@ -21,9 +21,11 @@
 		d3
 			.pie()
 			.value((d) => d.value)
-			.sort(null)(data),
+			.sort((a, b) => d3.descending(a.label, b.label))(data),
 	);
 
+	// To convert this pie chart into a donut chart, replace the line below with:
+	// const arcPath = d3.arc().innerRadius(radius * 0.5).outerRadius(radius);
 	const arcPath = d3.arc().innerRadius(0).outerRadius(radius);
 	const labelArc = d3.arc().innerRadius(labelRadius).outerRadius(labelRadius);
 	const total = $derived(d3.sum(data, (d) => d.value));
