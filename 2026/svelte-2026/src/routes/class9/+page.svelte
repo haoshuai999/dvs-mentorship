@@ -19,35 +19,38 @@
 	// than the equivalent GeoJSON with cleaner topology. Because D3's geoPath
 	// consumes GeoJSON, we use topojson-client's `feature()` to convert the
 	// TopoJSON object back into GeoJSON features at render time.
+
 	const TOPOJSON_URL =
 		"https://cdn.jsdelivr.net/npm/us-atlas@3/states-10m.json";
 
 	const width = 960;
 	const height = 700;
 
-	let states = $state([]);
+	let usStates = $state([]);
 	let values = $state({});
 	let hovered = $state(null);
 
 	onMount(() => {
-		d3.json(TOPOJSON_URL).then((topo) => {
-			states = feature(topo, topo.objects.states).features;
+		d3.json(TOPOJSON_URL).then((topology) => {
+			usStates = feature(topology, topology.objects.states).features;
+			console.log(usStates);
 			values = Object.fromEntries(
-				states.map((f) => [f.properties.name, Math.floor(Math.random() * 101)]),
+				usStates.map((d) => [d.properties.name, Math.random() * 100]),
 			);
+			console.log(values);
 		});
 	});
 
 	const projection = $derived(
 		d3.geoAlbersUsa().fitSize([width, height], {
 			type: "FeatureCollection",
-			features: states,
+			features: usStates,
 		}),
 	);
 
-	const pathGen = $derived(d3.geoPath(projection));
+	const pathGen = $derived(d3.geoPath().projection(projection));
 
-	const color = d3
+	const colorScale = d3
 		.scaleSequential()
 		.domain([0, 100])
 		.interpolator(d3.interpolateReds);
@@ -57,104 +60,58 @@
 	const legendX = 40;
 	const legendY = 20;
 
-	const legendTickScale = d3.scaleLinear([0, 100], [0, legendWidth]);
-	const legendTicks = color.ticks();
+	const legendScale = d3.scaleLinear().domain([0, 100]).range([0, legendWidth]);
+	const legendTicks = legendScale.ticks(5);
 </script>
 
 <h1>Class 9 - D3 US State Map</h1>
 
-<p>
-	Hover a state to see its dummy value. Shape data: US Census cartographic
-	boundary via
-	<a
-		href="https://github.com/topojson/us-atlas"
-		target="_blank"
-		rel="noreferrer"
-	>
-		us-atlas
-	</a>
-	.
-</p>
-
-<div class="chart-wrap">
-	<div class="info">
-		{#if hovered}
-			<strong>{hovered.name}</strong>: {hovered.value}
-		{:else}
-			<em>Hover a state</em>
-		{/if}
-	</div>
-
-	<svg {width} {height} aria-label="US state map">
-		<g transform="translate(0, 30)">
-			{#each states as state (state.properties.name)}
-				{@const name = state.properties.name}
-				{@const value = values[name]}
-				<path
-					d={pathGen(state)}
-					fill={color(value)}
-					stroke="#ffffff"
-					stroke-width="0.5"
-					class:hovered={hovered?.name === name}
-					onmouseenter={() => (hovered = { name, value })}
-					onmouseleave={() => (hovered = null)}
-					role="img"
-					aria-label={`${name}: ${value}`}
-				>
-					<title>{name}: {value}</title>
-				</path>
-			{/each}
-		</g>
-
-		<g transform={`translate(${legendX}, ${legendY})`} class="legend">
-			{#each legendTicks as t, i}
-				{#if i < legendTicks.length - 1}
-					<rect
-						x={legendTickScale(t)}
-						width={legendTickScale(legendTicks[i + 1]) - legendTickScale(t)}
-						height={legendHeight}
-						fill={color((t + legendTicks[i + 1]) / 2)}
-					/>
-				{/if}
-				<line
-					x1={legendTickScale(t)}
-					x2={legendTickScale(t)}
-					y1={legendHeight}
-					y2={legendHeight + 4}
-					stroke="#333"
-				/>
-				<text
-					x={legendTickScale(t)}
-					y={legendHeight + 6}
-					text-anchor="middle"
-					dominant-baseline="hanging"
-				>
-					{t}
-				</text>
-			{/each}
-		</g>
-	</svg>
+<div>
+	{#if hovered}
+		<strong>{hovered.name}</strong>: {hovered.value}
+	{:else}
+		<em>Hover a state</em>
+	{/if}
 </div>
 
+<svg {width} {height}>
+	<g transform="translate(0, 30)">
+		{#each usStates as state}
+			{@const name = state.properties.name}
+			{@const value = values[name]}
+			<path
+				d={pathGen(state)}
+				fill={colorScale(values[state.properties.name])}
+				stroke="#fff"
+				stroke-width="0.5"
+				class:hovered={hovered?.name === name}
+				onmouseenter={() => (hovered = { name, value })}
+				onmouseleave={() => (hovered = null)}
+				role="img"
+			/>
+		{/each}
+	</g>
+
+	<g transform={`translate(${legendX}, ${legendY})`}>
+		{#each legendTicks as tick, i}
+			{#if i < legendTicks.length - 1}
+				<rect
+					x={legendScale(tick)}
+					width={legendScale(legendTicks[i + 1]) - legendScale(legendTicks[i])}
+					height={legendHeight}
+					fill={colorScale(tick)}
+				/>
+			{/if}
+			<text x={legendScale(tick)} y={legendHeight + 15} text-anchor="middle">
+				{tick}
+			</text>
+		{/each}
+	</g>
+</svg>
+
 <style>
-	.chart-wrap {
-		display: flex;
-		flex-direction: column;
-		gap: 8px;
-	}
-
-	path.hovered {
-		stroke: #111;
+	.hovered {
+		stroke: #000;
 		stroke-width: 1;
-	}
-
-	.info {
-		font-size: 14px;
-		min-height: 1.2em;
-	}
-
-	.legend text {
-		font-size: 11px;
-		fill: #333;
 	}
 </style>
